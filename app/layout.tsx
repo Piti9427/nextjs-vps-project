@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { createMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,11 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "nextjs-vps-project · VPS Deployment",
-  description:
-    "Production verification page for a self-hosted Next.js app on Oracle Cloud Infrastructure.",
-};
+export const metadata = createMetadata();
 
 export default function RootLayout({
   children,
