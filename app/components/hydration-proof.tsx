@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type HydrationProofProps = Readonly<{
   serverRenderedAt: string;
@@ -14,21 +14,34 @@ function formatTimestamp(iso: string): string {
   }).format(new Date(iso));
 }
 
+let clientBootTimestamp: string | undefined;
+
+function getClientBootTimestamp(): string {
+  clientBootTimestamp ??= new Date().toISOString();
+  return clientBootTimestamp;
+}
+
+function subscribeToHydration() {
+  return () => {};
+}
+
 export function HydrationProof({ serverRenderedAt }: HydrationProofProps) {
-  const [hydratedAt, setHydratedAt] = useState<string | null>(null);
+  const hydratedAt = useSyncExternalStore(
+    subscribeToHydration,
+    getClientBootTimestamp,
+    () => null,
+  );
   const [now, setNow] = useState<string | null>(null);
 
   useEffect(() => {
-    const hydrated = new Date().toISOString();
-    setHydratedAt(hydrated);
-    setNow(hydrated);
-
     const interval = globalThis.setInterval(() => {
       setNow(new Date().toISOString());
     }, 1000);
 
     return () => globalThis.clearInterval(interval);
   }, []);
+
+  const liveClock = now ?? hydratedAt;
 
   return (
     <section
@@ -74,7 +87,7 @@ export function HydrationProof({ serverRenderedAt }: HydrationProofProps) {
             Live clock (UTC)
           </dt>
           <dd className="mt-2 font-mono text-sm text-accent">
-            {now ? formatTimestamp(now) : "—"}
+            {liveClock ? formatTimestamp(liveClock) : "—"}
           </dd>
         </div>
       </dl>
