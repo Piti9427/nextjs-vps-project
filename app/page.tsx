@@ -1,3 +1,4 @@
+import { DeploymentInfo } from "./components/deployment-info";
 import { HydrationProof } from "./components/hydration-proof";
 import { InfrastructureStack } from "./components/infrastructure-stack";
 import { StatusBadge } from "./components/status-badge";
@@ -35,6 +36,7 @@ export default function Home() {
         </div>
 
         <div className="mt-14 space-y-16 sm:mt-16 sm:space-y-20">
+          <DeploymentInfo />
           <InfrastructureStack />
           <HydrationProof serverRenderedAt={serverRenderedAt} />
         </div>
